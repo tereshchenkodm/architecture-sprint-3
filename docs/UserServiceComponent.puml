@@ -1,0 +1,28 @@
+@startuml
+!pragma layout smetana
+title User Service Component Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(UserAPIService, "User API Service", "Java", "Обрабатывает запросы управления устройствами")
+  Container(ApiGateway, "API Gateway", "Java", "Распределяет запросы, балансирует нагрузку")
+  Container(Database, "Database", "PostgreSQL", "Хранит данные датчиков")
+}
+
+Container(UserAPIService, "User API Service", "Java") {
+  Component(UserDevicesController, "UserDevicesController", "Обрабатывает запросы добавления/удаления устройств")
+  Component(UserSettingsController, "UserSettingsController", "Обрабатывает запросы настройки устройств")
+  Component(UserService, "Service Layer", "Логика обработки запросов")
+  Component(UserRepository, "User Repository", "Работа с данными настроек устройств")
+}
+
+Rel(ApiGateway, UserDevicesController, "Запросы управления устройствами")
+Rel(ApiGateway, UserSettingsController, "Запросы настройки устройств")
+Rel(UserDevicesController, UserService, "Вызывает бизнес-логику")
+Rel(UserSettingsController, UserService, "Вызывает бизнес-логику")
+Rel(UserService, UserRepository, "Чтение/запись данных телеметрии")
+Rel(UserRepository, Database, "Чтение/запись данных телеметрии")
+@enduml

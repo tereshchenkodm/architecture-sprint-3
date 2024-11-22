@@ -1,0 +1,27 @@
+@startuml
+!pragma layout smetana
+title Garage Service Component Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(GaragePIService, "Garage API Service", "Java", "Обрабатывает запросы управления воротами")
+  Container(ApiGateway, "API Gateway", "Java", "Распределяет запросы, балансирует нагрузку")
+  Container(MessageBroker, "Message Broker", "Kafka", "Реализует асинхронное взаимодействие")
+  Container(Database, "Database", "PostgreSQL", "Хранит данные датчиков")
+}
+
+Container(GarageAPIService, "Garage API Service", "Java") {
+  Component(GarageController, "GarageController", "Обрабатывает запросы к системе")
+  Component(GarageService, "Service Layer", "Логика обработки запросов")
+  Component(GarageRepository, "Garage Repository", "Работа с данными ворот")
+}
+
+Rel(ApiGateway, GarageController, "Инициирует запросы к системе")
+Rel(GarageController,GarageService, "Вызывает бизнес-логику")
+Rel(GarageService, MessageBroker, "Запросы к устройствам ворот")
+Rel(GarageService, GarageRepository, "Чтение/запись данных ворот")
+Rel(GarageRepository, Database, "Чтение/запись данных ворот")
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+!pragma layout smetana
+title Heating Service Component Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(HeatingAPIService, "Heating API Service", "Java", "Обрабатывает запросы управления отоплением")
+  Container(ApiGateway, "API Gateway", "Java", "Распределяет запросы, балансирует нагрузку")
+  Container(MessageBroker, "Message Broker", "Kafka", "Реализует асинхронное взаимодействие")
+  Container(Database, "Database", "PostgreSQL", "Хранит данные датчиков")
+}
+
+Container(HeatingAPIService, "Heating API Service", "Java") {
+  Component(HeatingController, "HeatingController", "Обрабатывает запросы к системе")
+  Component(HeatingService, "Service Layer", "Логика обработки запросов")
+  Component(HeatingRepository, "Heating Repository", "Работа с данными системы отопления")
+}
+
+Rel(ApiGateway, HeatingController, "Инициирует запросы к системе")
+Rel(HeatingController, HeatingService, "Вызывает бизнес-логику")
+Rel(HeatingService, MessageBroker, "Запросы к устройствам системы отопления")
+Rel(HeatingService, HeatingRepository, "Чтение/запись данных системы отопления")
+Rel(HeatingRepository, Database, "Чтение/запись данных системы отопления")
+@enduml
