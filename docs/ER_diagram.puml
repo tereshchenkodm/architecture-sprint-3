@@ -1,0 +1,70 @@
+@startuml
+!pragma layout smetana
+' hide the spot
+' hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "User" as user {
+  *user_id : number <<generated>>
+  --
+  *name : text
+}
+
+entity "House" as house {
+  *house_id : number <<generated>>
+  --
+  *user_id : number <<FK>>
+}
+
+entity "DeviceType" as device_type {
+  *device_type_id : number <<generated>>
+  --
+  *type : text
+}
+
+entity "ModuleType" as module_type {
+  *module_type_id : number <<generated>>
+  --
+  *type : text
+}
+
+entity "Device" as device {
+  *device_id : number <<generated>>
+  --
+  *device_type_id : number <<FK>>
+  *house_id : number <<FK>>
+  *name : text
+  *serial_number : text
+  *status : text
+}
+
+entity "Module" as module {
+  *module_id : number <<generated>>
+  --
+  *device_id : number <<FK>>
+  *module_type_id : number <<FK>>
+  *name : text
+  *serial_number : text
+  *status : text
+  *value : text
+}
+
+entity "TelemetryData" as telemetry_data {
+  *telemetry_data_id : number <<generated>>
+  --
+  *module_id : number <<FK>>
+  *date : timestamp
+  *status : text
+  *message : text
+}
+
+user ||..o{ house
+house ||..o{ device
+device_type ||..o{ device
+device ||..o{ module
+module_type ||..o{ module
+module ||..o{ telemetry_data
+
+@enduml

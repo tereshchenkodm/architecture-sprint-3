@@ -1,0 +1,27 @@
+@startuml
+!pragma layout smetana
+title Telemetry Service Component Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(TelemetryAPIService, "Telemetry API Service", "Java", "Обрабатывает запросы получения данных с датчиков")
+  Container(ApiGateway, "API Gateway", "Java", "Распределяет запросы, балансирует нагрузку")
+  Container(MessageBroker, "Message Broker", "Kafka", "Реализует асинхронное взаимодействие")
+  Container(Database, "Database", "PostgreSQL", "Хранит данные датчиков")
+}
+
+Container(TelemetryAPIService, "Telemetry API Service", "Java") {
+  Component(TelemetryController, "TelemetryController", "Обрабатывает запросы к системе")
+  Component(TelemetryService, "Service Layer", "Логика обработки запросов")
+  Component(TelemetryRepository, "Telemetry Repository", "Работа с данными телеметрии")
+}
+
+Rel(ApiGateway, TelemetryController, "Инициирует запросы к системе")
+Rel(TelemetryController, TelemetryService, "Вызывает бизнес-логику")
+Rel(MessageBroker, TelemetryService, "Данные с датчиков")
+Rel(TelemetryService, TelemetryRepository, "Чтение/запись данных телеметрии")
+Rel(TelemetryRepository, Database, "Чтение/запись данных телеметрии")
+@enduml

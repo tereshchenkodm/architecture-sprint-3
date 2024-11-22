@@ -1,0 +1,19 @@
+@startuml
+!pragma layout smetana
+title Smart Home Device Management Code Diagram
+
+actor       User       as user
+participant APIGateway as api_gateway
+participant Service as service
+queue       Kafka       as message_broker
+database    Database    as database
+
+user -> api_gateway : Запрос на управление устройствами
+api_gateway -> service : Запрос к сервису устройства
+service -> database : Сохранение данных устройства в базу данных
+database -> service : Получение данных
+service -> api_gateway : Результат запроса
+api_gateway -> user : Результат запроса
+user -> api_gateway : Асинхронный запрос
+api_gateway -> message_broker : Публикация запроса в очередь
+@enduml
